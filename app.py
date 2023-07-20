@@ -116,6 +116,11 @@ def logout():
 
     form = g.csrf_form
 
+    if form.validate_on_submit():
+        session.pop(CURR_USER_KEY, None)
+
+    return redirect("/")
+
     # IMPLEMENT THIS AND FIX BUG
     # DO NOT CHANGE METHOD ON ROUTE
 
