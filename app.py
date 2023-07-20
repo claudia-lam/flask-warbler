@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm
+from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, UserEditForm
 from models import db, connect_db, User, Message
 
 load_dotenv()
@@ -227,7 +227,8 @@ def profile():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    form = MessageForm()
+    user = User.query.get_or_404(g.user)
+    form = UserEditForm(obj=user)
 
     if form.validate_on_submit():
         msg = Message(text=form.text.data)
