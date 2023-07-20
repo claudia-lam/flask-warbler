@@ -67,7 +67,15 @@ class UserViewTestCase(UserBaseViewTestCase):
             # Now, that session setting is saved, so we can have
             # the rest of ours test
             resp = c.post("/logout", follow_redirects=True)
+            html = resp.text
 
             self.assertEqual(resp.status_code, 200)
+            self.assertIn("signup", html)
 
-            # Message.query.filter_by(text="Hello").one()
+            # check if user can access followers page
+            resp_anon = c.get(
+                f"/users/{self.u1_id}/following", follow_redirects=True)
+            html_anon = resp_anon.text
+
+            self.assertEqual(resp_anon.status_code, 200)
+            self.assertIn("signup", html_anon)
