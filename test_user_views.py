@@ -44,8 +44,8 @@ class UserBaseViewTestCase(TestCase):
         User.query.delete()
 
         u1 = User.signup("u1", "u1@email.com", "password", None)
-        u1.bio = "test bio"
-        u1.location = "test location"
+        u1.bio = "test_bio"
+        u1.location = "test_location"
         db.session.flush()
 
         m1 = Message(text="m1-text", user_id=u1.id)
@@ -90,8 +90,8 @@ class UserViewTestCase(UserBaseViewTestCase):
             resp = c.get(f"/users/{self.u1_id}")
             html = resp.text
 
-            self.assertIn("test bio", html)
-            self.assertIn("test location", html)
+            self.assertIn("test_bio", html)
+            self.assertIn("test_location", html)
 
     def test_show_followers(self):
         with self.client as c:
@@ -101,7 +101,7 @@ class UserViewTestCase(UserBaseViewTestCase):
             resp = c.get(f"/users/{self.u1_id}/followers")
             html = resp.text
 
-            self.assertIn("test bio", html)
+            self.assertIn("test_bio", html)
 
     def test_show_following(self):
         with self.client as c:
@@ -111,4 +111,14 @@ class UserViewTestCase(UserBaseViewTestCase):
             resp = c.get(f"/users/{self.u1_id}/following")
             html = resp.text
 
-            self.assertIn("test bio", html)
+            self.assertIn("test_bio", html)
+
+    def test_list_users(self):
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            resp = c.get(f"/users")
+            html = resp.text
+
+            self.assertIn("test_bio", html)
