@@ -66,7 +66,7 @@ class UserViewTestCase(UserBaseViewTestCase):
 
             # Now, that session setting is saved, so we can have
             # the rest of ours test
-            resp = c.post("/logout")
+            resp = c.post("/logout", follow_redirects=True)
 
             self.assertEqual(resp.status_code, 200)
 
