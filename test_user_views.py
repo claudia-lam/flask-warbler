@@ -56,8 +56,8 @@ class UserBaseViewTestCase(TestCase):
         self.client = app.test_client()
 
 
-class UserLogoutViewTestCase(UserBaseViewTestCase):
-    def test_add_message(self):
+class UserViewTestCase(UserBaseViewTestCase):
+    def test_logout(self):
         # Since we need to change the session to mimic logging in,
         # we need to use the changing-session trick:
         with self.client as c:
@@ -66,8 +66,8 @@ class UserLogoutViewTestCase(UserBaseViewTestCase):
 
             # Now, that session setting is saved, so we can have
             # the rest of ours test
-            resp = c.post("/messages/new", data={"text": "Hello"})
+            resp = c.post("/logout")
 
-            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(resp.status_code, 200)
 
-            Message.query.filter_by(text="Hello").one()
+            # Message.query.filter_by(text="Hello").one()
