@@ -103,12 +103,12 @@ class UserViewTestCase(UserBaseViewTestCase):
 
             self.assertIn("test bio", html)
 
-    def test_show_followers(self):
+    def test_show_following(self):
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u1_id
 
-            resp = c.get(f"/users/{self.u1_id}/followers")
+            resp = c.get(f"/users/{self.u1_id}/following")
             html = resp.text
 
             self.assertIn("test bio", html)
