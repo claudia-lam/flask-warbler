@@ -121,12 +121,9 @@ def logout():
 
     return redirect("/")
 
-    # IMPLEMENT THIS AND FIX BUG
-    # DO NOT CHANGE METHOD ON ROUTE
-
-
 ##############################################################################
 # General user routes:
+
 
 @app.get('/users')
 def list_users():
@@ -226,7 +223,20 @@ def stop_following(follow_id):
 def profile():
     """Update profile for current user."""
 
-    # IMPLEMENT THIS
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    form = MessageForm()
+
+    if form.validate_on_submit():
+        msg = Message(text=form.text.data)
+        g.user.messages.append(msg)
+        db.session.commit()
+
+        return redirect(f"/users/{g.user.id}")
+
+    return render_template('messages/create.html', form=form)
 
 
 @app.post('/users/delete')
