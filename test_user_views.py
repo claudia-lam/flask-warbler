@@ -44,6 +44,8 @@ class UserBaseViewTestCase(TestCase):
         User.query.delete()
 
         u1 = User.signup("u1", "u1@email.com", "password", None)
+        u1.bio = "test bio"
+        u1.location = "test location"
         db.session.flush()
 
         m1 = Message(text="m1-text", user_id=u1.id)
@@ -79,3 +81,14 @@ class UserViewTestCase(UserBaseViewTestCase):
 
             self.assertEqual(resp_anon.status_code, 200)
             self.assertIn("signup", html_anon)
+
+    def test_show_user(self):
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            resp = c.get(f"/users/{self.u1_id}")
+            html = resp.text
+
+            self.assertIn("test bio", html)
+            self.assertIn("test location", html)
