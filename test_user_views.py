@@ -161,12 +161,3 @@ class UserViewTestCase(UserBaseViewTestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Wrong password. Try again.", html)
-
-        # # unauthorized user
-        # resp = c.post('/users/profile', data={
-        #     "username": "updated_username",
-        #     "bio": "updated_bio"
-        # }, follow_redirects=False)
-
-        # self.assertEquals(resp.status_code, 302)
-        # self.assertEqual(resp.location, "/")
