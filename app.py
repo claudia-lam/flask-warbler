@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import defer
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, UserEditForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Follows
 
 load_dotenv()
 bcrypt = Bcrypt()
@@ -249,7 +249,7 @@ def profile():
             return redirect(f"/users/{g.user.id}")
 
         else:
-            flash("Wrong password. Try again.", "danger")
+            flash("Wrong password. Try again. ", "danger")
 
     return render_template('users/edit.html', form=form)
 
@@ -343,8 +343,13 @@ def homepage():
     """
 
     if g.user:
+        user_id = g.user.id
+        followed_users = g.user.following
+        followed_users_ids = [user.id for user in followed_users]
+
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(followed_users_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
