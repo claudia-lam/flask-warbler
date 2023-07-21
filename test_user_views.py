@@ -125,10 +125,48 @@ class UserViewTestCase(UserBaseViewTestCase):
 
     def test_profile(self):
         with self.client as c:
+
+            # authorized user
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.u1_id
 
-            resp = c.get('/users/profile')
-            html - resp.text
+            resp = c.post('/users/profile', data={
+                "username": "updated_username",
+                "bio": "updated_bio",
+                "password": "password"
+            }, follow_redirects=True)
+
+            html = resp.text
 
             self.assertEqual(resp.status_code, 200)
+            self.assertIn("updated_username", html)
+            self.assertIn("updated_bio", html)
+
+    def test_profile_wrong_password(self):
+        with self.client as c:
+
+            # wrong password
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            resp = c.post(
+                "/users/profile",
+                data={
+                    "username": "updatedU",
+                    "password": "wrongpassword"
+                },
+                follow_redirects=True)
+
+            html = resp.text
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Wrong password. Try again.", html)
+
+        # # unauthorized user
+        # resp = c.post('/users/profile', data={
+        #     "username": "updated_username",
+        #     "bio": "updated_bio"
+        # }, follow_redirects=False)
+
+        # self.assertEquals(resp.status_code, 302)
+        # self.assertEqual(resp.location, "/")
