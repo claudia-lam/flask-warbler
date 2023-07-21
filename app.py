@@ -2,13 +2,17 @@ import os
 from dotenv import load_dotenv
 
 from flask import Flask, render_template, request, flash, redirect, session, g
+from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
+from sqlalchemy.orm import defer
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, UserEditForm
 from models import db, connect_db, User, Message
 
 load_dotenv()
+bcrypt = Bcrypt()
 
 CURR_USER_KEY = "curr_user"
 
@@ -29,11 +33,13 @@ connect_db(app)
 
 @app.before_request
 def add_user_to_g():
-    """If we're logged in, add curr user to Flask global."""
+    """If we're logged in, add curr user to Flask global. Add csrf whether
+    current user is logged in or not. """
+
+    g.csrf_form = CSRFProtectForm()
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
-        g.csrf_form = CSRFProtectForm()
     else:
         g.user = None
 
@@ -227,17 +233,25 @@ def profile():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    user = User.query.get_or_404(g.user)
-    form = UserEditForm(obj=user)
+    form = UserEditForm(obj=g.user)
 
     if form.validate_on_submit():
-        msg = Message(text=form.text.data)
-        g.user.messages.append(msg)
-        db.session.commit()
+        edit_password = form.password.data
 
-        return redirect(f"/users/{g.user.id}")
+        if User.authenticate(g.user.password, edit_password):
+            g.user.username = form.username.data
+            g.user.email = form.email.data
+            g.user.image_url = form.image_url.data or None
+            g.user.header_image_url = form.header_image_url or None
+            g.user.bio = form.bio.data
 
-    return render_template('messages/create.html', form=form)
+            db.session.commit()
+            return redirect(f"/users/{g.user.id}")
+
+        else:
+            flash("Wrong password. Try again.", "danger")
+
+    return render_template('users/edit.html', form=form)
 
 
 @app.post('/users/delete')
