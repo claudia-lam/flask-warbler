@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 from sqlalchemy.orm import defer
 
-from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, UserEditForm
+from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, UserEditForm, LikesForm
 from models import db, connect_db, User, Message, Follows
 
 load_dotenv()
@@ -353,7 +353,9 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        form = LikesForm()
+
+        return render_template('home.html', messages=messages, form=form)
 
     else:
         return render_template('home-anon.html')
