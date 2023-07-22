@@ -334,7 +334,7 @@ def delete_message(message_id):
 
 
 @app.post('/messages/<int:msg_id>/like')
-def toggle_like(message_id):
+def toggle_like(msg_id):
     """Add or remove like from database. """
 
     if not g.user:
@@ -344,9 +344,11 @@ def toggle_like(message_id):
     form = g.csrf_form
 
     if form.validate_on_submit():
-        message = Message.query.get(message_id)
+        message = Message.query.get(msg_id)
 
-        message.likes.message_id = message_id
+        isLiked = True if 'like' in request.form else None
+
+        message.likes.message_id = msg_id
         message.likes.user_id = g.user.id
 
         db.session.add(message)
