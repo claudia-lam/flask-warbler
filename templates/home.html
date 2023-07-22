@@ -57,8 +57,12 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
-            <form action="/messages/{{ msg.id}}/like" class="messages-like" method="POST">
-              <label for="button" class="bi bi-heart"></label>
+            <form action="/messages/{{ msg.id }}/like" method="POST">
+              {% if msg.likes %}
+              <button class="messages-like"><span class="bi bi-heart-fill"></span></button>
+              {% else %}
+              <button class="messages-like"><span class="bi bi-heart"></span></button>
+              {% endif %}
             </form>
 
           </li>
