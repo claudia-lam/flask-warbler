@@ -226,7 +226,7 @@ def stop_following(follow_id):
 
 
 @app.route('/users/profile', methods=["GET", "POST"])
-def edti_profile():
+def edit_profile():
     """Update profile for current user."""
 
     if not g.user:
@@ -328,6 +328,19 @@ def delete_message(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+##############################################################################
+# Likes routes:
+
+
+@app.post('/messages/<int:msg_id>/like')
+def toggle_like(message_id):
+    """Add or remove like from database. """
+
+    form = g.csrf_form
+
+    if form.validate_on_submit():
+        session.pop(CURR_USER_KEY, None)
 
 
 ##############################################################################
