@@ -171,4 +171,4 @@ class UserViewTestCase(UserBaseViewTestCase):
             resp = c.get("/")
             html = resp.text
 
-            self.assertIn("""<i class="bi bi-star"></i>""", html)
+            self.assertIn("""<form id="likes-form" method="POST">""", html)
