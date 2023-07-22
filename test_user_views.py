@@ -161,3 +161,14 @@ class UserViewTestCase(UserBaseViewTestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Wrong password. Try again.", html)
+
+    def test_homepage(self):
+        with self.client as c:
+
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            resp = c.get("/")
+            html = resp.text
+
+            self.assertIn("""<i class="bi bi-star"></i>""", html)
