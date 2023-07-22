@@ -337,11 +337,21 @@ def delete_message(message_id):
 def toggle_like(message_id):
     """Add or remove like from database. """
 
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
     form = g.csrf_form
 
     if form.validate_on_submit():
-        session.pop(CURR_USER_KEY, None)
+        message = Message.query.get(message_id)
 
+        message.likes.message_id = message_id
+        message.likes.user_id = g.user.id
+
+        db.session.add(message)
+        db.session.commit()
+        return redirect("/")
 
 ##############################################################################
 # Homepage and error pages
