@@ -57,7 +57,7 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
-            <form action="/messages/{{ msg.id}}/like" id="likes-form" method="POST">
+            <form action="/messages/{{ msg.id}}/like" class="messages-like" method="POST">
               <label for="button" class="bi bi-heart"></label>
             </form>
 
