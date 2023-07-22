@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, BooleanField
+from wtforms import StringField, PasswordField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, Optional
 
 
@@ -78,13 +78,6 @@ class LoginForm(FlaskForm):
         'Password',
         validators=[Length(min=6)],
     )
-
-
-class LikesForm(FlaskForm):
-    """Form for liking messages. """
-
-    like = BooleanField('Like',
-                        validators=[Optional()])
 
 
 class CSRFProtectForm(FlaskForm):
