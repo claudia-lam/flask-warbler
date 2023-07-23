@@ -52,6 +52,9 @@ class UserModelTestCase(TestCase):
         self.assertEqual(len(u1.messages), 0)
         self.assertEqual(len(u1.followers), 0)
 
+
+class FollowsTestCase(UserModelTestCase):
+
     def test_is_following(self):
         u1 = User.query.get(self.u1_id)
         u2 = User.query.get(self.u2_id)
