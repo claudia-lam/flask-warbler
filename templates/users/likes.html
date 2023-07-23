@@ -47,8 +47,8 @@
 
     <div class="col-lg-6 col-md-8 col-sm-12">
       <ul class="list-group" id="messages">
-        {% for msg in user.messages %}
-          {% if msg.likes %}
+        {% for msg in messages %}
+          <!-- {% if user in msg.likes %} -->
           <li class="list-group-item">
             <a href="/messages/{{ msg.id }}" class="message-link"/>
             <a href="/users/{{ msg.user.id }}">
@@ -60,7 +60,7 @@
               <p>{{ msg.text }}</p>
             </div>
             {% include 'messages/likes-form.html' %}
-          {% endif %}
+          <!-- {% endif %} -->
           </li>
         {% endfor %}
       </ul>
