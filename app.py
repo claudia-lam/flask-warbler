@@ -344,7 +344,11 @@ def show_likes(user_id):
     user = User.query.get_or_404(user_id)
 
     liked_message_ids = [like.message_id for like in user.likes]
-    messages = Message.id.in_(liked_message_ids).all()
+
+    messages = (Message
+                .query
+                .filter(Message.id.in_(liked_message_ids))
+                .all())
 
     return render_template("/users/likes.html", messages=messages)
 
