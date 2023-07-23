@@ -59,7 +59,8 @@ class MessageModelTestCase(TestCase):
 class FollowsTestCase(MessageModelTestCase):
 
     def test_user_message(self):
-        u1 = MessageModelTestCase.u1
-        m1 = MessageModelTestCase.m1
+
+        u1 = User.query.get(self.u1_id)
+        m1 = Message.query.get(self.m1_id)
 
         self.assertIn(m1, u1.messages)
