@@ -530,10 +530,6 @@ p.card-bio {
   z-index: 1;
 }
 
-.like-button {
-  outline: none;
-}
-
 .single-message {
   font-size: 27px;
   line-height: 32px;
