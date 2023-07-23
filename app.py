@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import defer
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFProtectForm, UserEditForm
-from models import db, connect_db, User, Message, Follows
+from models import db, connect_db, User, Message, Follows, Like
 
 load_dotenv()
 bcrypt = Bcrypt()
@@ -22,7 +22,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
@@ -344,15 +344,25 @@ def toggle_like(msg_id):
     form = g.csrf_form
 
     if form.validate_on_submit():
-        message = Message.query.get(msg_id)
+        location = request.form.get("came_from", "/")
 
         isLiked = True if 'like' in request.form else None
 
-        message.likes.message_id = msg_id
-        message.likes.user_id = g.user.id
+        if isLiked:
+            new_like = Like(message_id=msg_id, user_id=g.user.id)
 
-        db.session.add(message)
-        db.session.commit()
+            db.session.add(new_like)
+            db.session.commit()
+
+        else:
+
+            like = Like.query.filter(
+                (Like.message_id == msg_id) & (Like.user_id == g.user.id)).first()
+            db.session.delete(like)
+            db.session.commit()
+
+        return redirect(f"{location}")
+    else:
         return redirect("/")
 
 ##############################################################################
