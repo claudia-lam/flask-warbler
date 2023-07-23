@@ -93,7 +93,10 @@ class FollowsTestCase(UserModelTestCase):
 
         self.assertFalse(u2.is_followed_by(u1))
 
+
 class UserAuthenticateTestCase(UserModelTestCase):
 
+    def test_signup_success(self):
+        User.signup("u3", "u3@email.com", "password", None)
 
-
+        self.assertIsNotNone(User.query.filter(User.id == "u3").first())
