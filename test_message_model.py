@@ -10,7 +10,7 @@ import os
 import pytest
 from unittest import TestCase
 
-from models import db, User, Message, Follows
+from models import db, User, Message, Follows, Like
 
 # BEFORE we import our app, let's set an environmental variable
 # to use a different database for tests (we need to do this
@@ -61,3 +61,10 @@ class MessageModelTestCase(TestCase):
         m1 = Message.query.get(self.m1_id)
 
         self.assertIn(m1, u1.messages)
+
+    def test_like_message(self):
+
+        m1 = Message.query.get(self.m1_id)
+        new_like = Like(message_id=self.m1_id, user_id=self.u1_id)
+
+        self.assertIn(new_like, m1.likes)
