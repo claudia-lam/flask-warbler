@@ -520,6 +520,7 @@ p.card-bio {
   right: 4px;
   z-index: 1;
   border: none;
+  color:palevioletred;
 }
 
 .messages-like-bottom {

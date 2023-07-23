@@ -57,16 +57,7 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
-            {% include 'messages/likes.html' %}
-            <!-- <form action="/messages/{{ msg.id }}/like" method="POST">
-              {{ g.csrf_form.hidden_tag() }}
-              {% if msg.likes %}
-              <button class="messages-like"><span class="bi bi-heart-fill"></span></button>
-              {% else %}
-              <button class="messages-like"><span class="bi bi-heart"></span></button>
-              <input type="hidden" name="like"/>
-              {% endif %}
-            </form> -->
+            {% include 'messages/likes-form.html' %}
 
           </li>
         {% endfor %}

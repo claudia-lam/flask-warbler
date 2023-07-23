@@ -333,6 +333,20 @@ def delete_message(message_id):
 # Likes routes:
 
 
+@app.get('/users/<int:user_id>/followers')
+def show_likes(user_id):
+    """Show user likes."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    likes = user.likes
+
+    return render_template("/", likes=likes)
+
+
 @app.post('/messages/<int:msg_id>/like')
 def toggle_like(msg_id):
     """Add or remove like from database. """
