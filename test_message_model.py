@@ -66,5 +66,7 @@ class MessageModelTestCase(TestCase):
 
         m1 = Message.query.get(self.m1_id)
         new_like = Like(message_id=self.m1_id, user_id=self.u1_id)
+        db.session.add(new_like)
+        db.session.commit()
 
         self.assertIn(new_like, m1.likes)
