@@ -100,3 +100,8 @@ class UserAuthenticateTestCase(UserModelTestCase):
         User.signup("u3", "u3@email.com", "password", None)
 
         self.assertIsNotNone(User.query.filter(User.username == "u3").first())
+
+    def test_signup_fail(self):
+        user = User.signup("u3", "u3@email.com", None)
+
+        self.assertIsNone(user)
