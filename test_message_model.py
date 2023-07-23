@@ -30,16 +30,19 @@ db.drop_all()
 db.create_all()
 
 
-class UserModelTestCase(TestCase):
+class MessageModelTestCase(TestCase):
     def setUp(self):
         User.query.delete()
 
         u1 = User.signup("u1", "u1@email.com", "password", None)
-        u2 = User.signup("u2", "u2@email.com", "password", None)
+        db.session.flush()
 
+        m1 = Message(text="m1-text", user_id=u1.id)
+        db.session.add_all([m1])
         db.session.commit()
+
         self.u1_id = u1.id
-        self.u2_id = u2.id
+        self.m1_id = m1.id
 
         self.client = app.test_client()
 
@@ -50,21 +53,13 @@ class UserModelTestCase(TestCase):
         u1 = User.query.get(self.u1_id)
 
         # User should have no messages & no followers
-        self.assertEqual(len(u1.messages), 0)
-        self.assertEqual(len(u1.followers), 0)
+        self.assertEqual(len(u1.messages), 1)
 
 
-class FollowsTestCase(UserModelTestCase):
+class FollowsTestCase(MessageModelTestCase):
 
-    def test_is_following(self):
-        u1 = User.query.get(self.u1_id)
-        u2 = User.query.get(self.u2_id)
+    def test_user_message(self):
+        u1 = MessageModelTestCase.u1
+        m1 = MessageModelTestCase.m1
 
-        u1_follows_u2 = Follows(
-            user_being_followed_id=self.u2_id,
-            user_following_id=self.u1_id)
-
-        db.session.add(u1_follows_u2)
-        db.session.commit()
-
-        self.assertTrue(u1.is_following(u2))
+        self.assertIn(m1, u1.messages)
