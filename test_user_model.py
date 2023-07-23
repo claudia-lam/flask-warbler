@@ -92,3 +92,8 @@ class FollowsTestCase(UserModelTestCase):
         u2 = User.query.get(self.u2_id)
 
         self.assertFalse(u2.is_followed_by(u1))
+
+class UserAuthenticateTestCase(UserModelTestCase):
+
+
+
