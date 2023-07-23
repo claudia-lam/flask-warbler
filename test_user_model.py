@@ -102,9 +102,15 @@ class UserAuthenticateTestCase(UserModelTestCase):
 
         self.assertIsNotNone(User.query.filter(User.username == "u3").first())
 
-    def test_signup_fail(self):
+    def test_signup_fail_no_password(self):
 
+        # missing password
         with pytest.raises(ValueError) as user:
             User.signup("u3", "u3@email.com", None)
 
         assert str(user.value) == "Password must be non-empty."
+
+    def test_authenticate_success(self):
+        user = User.authenticate("u1", "password")
+
+        self.assertTrue(user)
