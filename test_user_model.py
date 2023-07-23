@@ -7,6 +7,7 @@
 
 from app import app
 import os
+import pytest
 from unittest import TestCase
 
 from models import db, User, Message, Follows
@@ -102,6 +103,8 @@ class UserAuthenticateTestCase(UserModelTestCase):
         self.assertIsNotNone(User.query.filter(User.username == "u3").first())
 
     def test_signup_fail(self):
-        user = User.signup("u3", "u3@email.com", None)
 
-        self.assertIsNone(user)
+        with pytest.raises(ValueError) as user:
+            User.signup("u3", "u3@email.com", None)
+
+        assert str(user.value) == "Password must be non-empty."
