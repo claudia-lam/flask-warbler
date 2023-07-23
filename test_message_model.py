@@ -55,9 +55,6 @@ class MessageModelTestCase(TestCase):
         # User should have no messages & no followers
         self.assertEqual(len(u1.messages), 1)
 
-
-class FollowsTestCase(MessageModelTestCase):
-
     def test_user_message(self):
 
         u1 = User.query.get(self.u1_id)
