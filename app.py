@@ -333,7 +333,7 @@ def delete_message(message_id):
 # Likes routes:
 
 
-@app.get('/users/<int:user_id>/followers')
+@app.get('/users/<int:user_id>/likes')
 def show_likes(user_id):
     """Show user likes."""
 
@@ -342,9 +342,8 @@ def show_likes(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    likes = user.likes
 
-    return render_template("/", likes=likes)
+    return render_template("/users/likes.html", user=user)
 
 
 @app.post('/messages/<int:msg_id>/like')
