@@ -73,3 +73,22 @@ class FollowsTestCase(UserModelTestCase):
         u2 = User.query.get(self.u2_id)
 
         self.assertFalse(u1.is_following(u2))
+
+    def test_is_followed_by(self):
+        u1 = User.query.get(self.u1_id)
+        u2 = User.query.get(self.u2_id)
+
+        u1_follows_u2 = Follows(
+            user_being_followed_id=self.u2_id,
+            user_following_id=self.u1_id)
+
+        db.session.add(u1_follows_u2)
+        db.session.commit()
+
+        self.assertTrue(u2.is_followed_by(u1))
+
+    def test_is_not_followed_by(self):
+        u1 = User.query.get(self.u1_id)
+        u2 = User.query.get(self.u2_id)
+
+        self.assertFalse(u2.is_followed_by(u1))
