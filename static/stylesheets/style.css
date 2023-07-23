@@ -521,6 +521,7 @@ p.card-bio {
   z-index: 1;
   border: none;
   color:palevioletred;
+  background-color: transparent;
 }
 
 .messages-like-bottom {
