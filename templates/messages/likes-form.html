@@ -1,14 +1,16 @@
-<form action="/messages/{{ msg.id }}/like" method="POST">
+<form action="/messages/{{ msg.id }}/like"
+      method="POST"
+      class="messages-like-bottom">
   {{ g.csrf_form.hidden_tag() }}
 
   {% if msg.likes %}
 
-    <button class="messages-like"><span class="bi bi-heart-fill"></span></button>
+    <button class="btn like-btn"><i class="bi-heart-fill"></i></button>
 
   {% else %}
 
-  <button class="messages-like"><span class="bi bi-heart"></span></button>
-  <input type="hidden" name="like"/>
+    <button class="btn like-btn"><span class="bi bi-heart"></span></button>
+    <input type="hidden" name="like"/>
 
   {% endif %}
   <input type="hidden" name="came_from" value="{{request.url}}"/>
