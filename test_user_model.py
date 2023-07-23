@@ -99,4 +99,4 @@ class UserAuthenticateTestCase(UserModelTestCase):
     def test_signup_success(self):
         User.signup("u3", "u3@email.com", "password", None)
 
-        self.assertIsNotNone(User.query.filter(User.id == "u3").first())
+        self.assertIsNotNone(User.query.filter(User.username == "u3").first())
