@@ -64,3 +64,9 @@ class UserModelTestCase(TestCase):
         db.session.commit()
 
         self.assertTrue(u1.is_following(u2))
+
+    def test_is_not_following(self):
+        u1 = User.query.get(self.u1_id)
+        u2 = User.query.get(self.u2_id)
+
+        self.assertFalse(u1.is_following(u2))
