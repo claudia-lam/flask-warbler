@@ -343,7 +343,10 @@ def show_likes(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template("/users/likes.html", user=user)
+    liked_message_ids = [like.message_id for like in user.likes]
+    messages = Message.id.in_(liked_message_ids).all()
+
+    return render_template("/users/likes.html", messages=messages)
 
 
 @app.post('/messages/<int:msg_id>/like')
