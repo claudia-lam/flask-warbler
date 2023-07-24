@@ -5,6 +5,7 @@
 #    FLASK_DEBUG=False python -m unittest test_message_views.py
 
 
+from app import app, CURR_USER_KEY
 import os
 from unittest import TestCase
 
@@ -19,7 +20,6 @@ os.environ['DATABASE_URL'] = "postgresql:///warbler_test"
 
 # Now we can import app
 
-from app import app, CURR_USER_KEY
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
@@ -71,3 +71,19 @@ class MessageAddViewTestCase(MessageBaseViewTestCase):
             self.assertEqual(resp.status_code, 302)
 
             Message.query.filter_by(text="Hello").one()
+
+    def test_delete_message(self):
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            # Now, that session setting is saved, so we can have
+            # the rest of ours test
+            resp = c.post(
+                f"/messages/{self.m1_id}/delete")
+
+            self.assertEqual(resp.status_code, 302)
+
+            message = Message.query.filter(Message.id == self.m1_id).first()
+
+            self.assertIsNone(message)
