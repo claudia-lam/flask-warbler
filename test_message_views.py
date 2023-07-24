@@ -93,3 +93,12 @@ class MessageAddViewTestCase(MessageBaseViewTestCase):
             resp = c.post("/messages/new", data={"text": "Hello"})
 
             self.assertEqual(resp.status_code, 302)
+
+    def test_delete_message_anon(self):
+        with self.client as c:
+            resp = c.post(
+                f"/messages/{self.m1_id}/delete", follow_redirects=True)
+            html = resp.text
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Access unauthorized.", html)
