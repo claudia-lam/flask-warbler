@@ -5,6 +5,7 @@
 #    FLASK_DEBUG=False python -m unittest test_message_views.py
 
 
+from app import app, CURR_USER_KEY
 import os
 from unittest import TestCase
 
@@ -19,7 +20,6 @@ os.environ['DATABASE_URL'] = "postgresql:///warbler_test"
 
 # Now we can import app
 
-from app import app, CURR_USER_KEY
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
@@ -71,3 +71,56 @@ class MessageAddViewTestCase(MessageBaseViewTestCase):
             self.assertEqual(resp.status_code, 302)
 
             Message.query.filter_by(text="Hello").one()
+
+    def test_delete_message(self):
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            # Now, that session setting is saved, so we can have
+            # the rest of ours test
+            resp = c.post(
+                f"/messages/{self.m1_id}/delete")
+
+            self.assertEqual(resp.status_code, 302)
+
+            message = Message.query.filter(Message.id == self.m1_id).first()
+
+            self.assertIsNone(message)
+
+    def test_add_message_anon(self):
+        with self.client as c:
+            resp = c.post("/messages/new", data={"text": "Hello"})
+
+            self.assertEqual(resp.status_code, 302)
+
+    def test_delete_message_anon(self):
+        with self.client as c:
+            resp = c.post(
+                f"/messages/{self.m1_id}/delete", follow_redirects=True)
+            html = resp.text
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Access unauthorized.", html)
+
+    def test_delete_message_other_user(self):
+        u2 = User.signup("u2", "u2@email.com", "password", None)
+        db.session.flush()
+
+        m2 = Message(text="m2-text", user_id=u2.id)
+        db.session.add_all([m2])
+        db.session.commit()
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = 12345
+
+            resp = c.post(
+                f"/messages/{m2.id}/delete", follow_redirects=True)
+            html = resp.text
+
+            message = Message.query.filter(Message.id == m2.id).first()
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Access unauthorized", html)
+            self.assertIsNotNone(message)
