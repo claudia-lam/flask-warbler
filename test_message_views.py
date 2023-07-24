@@ -87,3 +87,9 @@ class MessageAddViewTestCase(MessageBaseViewTestCase):
             message = Message.query.filter(Message.id == self.m1_id).first()
 
             self.assertIsNone(message)
+
+    def test_add_message_anon(self):
+        with self.client as c:
+            resp = c.post("/messages/new", data={"text": "Hello"})
+
+            self.assertEqual(resp.status_code, 302)
