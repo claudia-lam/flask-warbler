@@ -102,3 +102,26 @@ class MessageAddViewTestCase(MessageBaseViewTestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Access unauthorized.", html)
+
+    def test_delete_message_other_user(self):
+        u2 = User.signup("u2", "u2@email.com", "password", None)
+        db.session.flush()
+
+        m2 = Message(text="m2-text", user_id=u2.id)
+        db.session.add_all([m2])
+        db.session.commit()
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            # Now, that session setting is saved, so we can have
+            # the rest of ours test
+            resp = c.post(
+                f"/messages/{self.m1_id}/delete")
+
+            self.assertEqual(resp.status_code, 302)
+
+            message = Message.query.filter(Message.id == m2.id).first()
+
+            self.assertIsNone(message)
