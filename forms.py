@@ -33,7 +33,7 @@ class UserAddForm(FlaskForm):
 
 
 class UserEditForm(FlaskForm):
-    """Form for adding users."""
+    """Form for editing users."""
 
     username = StringField(
         'Username',
