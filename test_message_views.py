@@ -113,15 +113,14 @@ class MessageAddViewTestCase(MessageBaseViewTestCase):
 
         with self.client as c:
             with c.session_transaction() as sess:
-                sess[CURR_USER_KEY] = self.u1_id
+                sess[CURR_USER_KEY] = 12345
 
-            # Now, that session setting is saved, so we can have
-            # the rest of ours test
             resp = c.post(
-                f"/messages/{self.m1_id}/delete")
-
-            self.assertEqual(resp.status_code, 302)
+                f"/messages/{m2.id}/delete", follow_redirects=True)
+            html = resp.text
 
             message = Message.query.filter(Message.id == m2.id).first()
 
-            self.assertIsNone(message)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Access unauthorized", html)
+            self.assertIsNotNone(message)
