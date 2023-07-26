@@ -122,10 +122,14 @@ def logout():
 
     form = g.csrf_form
 
-    if form.validate_on_submit():
-        session.pop(CURR_USER_KEY, None)
+    if not form.validate_on_submit() or not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
-    return redirect("/")
+    do_logout()
+
+    flash("You have successfully logged out.", 'success')
+    return redirect("/login")
 
 ##############################################################################
 # General user routes:
